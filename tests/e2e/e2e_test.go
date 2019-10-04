@@ -531,6 +531,8 @@ func (s *TestSuite) TestEmptyLabelPrefix() {
 	computeResource = s.UpdateTagsOnAzComputeResource(computeResource, tags)
 	WaitForReconcile() // wait for labels to update
 
+	// getting -3 instead of 3, len(updatedNode.labels) - numstartinglabels
+	// how did it decrease?
 	s.CheckNodeLabelsForTags(computeResourceNodes, tags, numStartingLabels, configOptions)
 
 	s.CleanupAzComputeResource(computeResource, tags, numStartingTags)
@@ -770,7 +772,7 @@ func (s *TestSuite) CheckNodeLabelsForTags(nodes []corev1.Node, tags map[string]
 		require.NoError(s.T(), err)
 		assert.Equal(s.T(), len(tags), len(updatedNode.Labels)-numStartingLabels[updatedNode.Name])
 		for key, val := range tags {
-			validLabelName := controller.ConvertTagNameToValidLabelName(key, *configOptions) // make sure this is config options I use
+			validLabelName := controller.ConvertTagNameToValidLabelName(key, *configOptions)
 			result, ok := updatedNode.Labels[validLabelName]
 			assert.True(s.T(), ok)
 			assert.Equal(s.T(), *val, result)
