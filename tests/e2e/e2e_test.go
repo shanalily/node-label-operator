@@ -531,8 +531,6 @@ func (s *TestSuite) TestEmptyLabelPrefix() {
 	computeResource = s.UpdateTagsOnAzComputeResource(computeResource, tags)
 	WaitForReconcile() // wait for labels to update
 
-	// getting -3 instead of 3, len(updatedNode.labels) - numstartinglabels
-	// how did it decrease?
 	s.CheckNodeLabelsForTags(computeResourceNodes, tags, numStartingLabels, configOptions)
 
 	s.CleanupAzComputeResource(computeResource, tags, numStartingTags)
