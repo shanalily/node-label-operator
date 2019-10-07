@@ -1,0 +1,6 @@
+# resources:
+# - quickstart.yaml
+bases:
+- ../rbac
+
+patches:

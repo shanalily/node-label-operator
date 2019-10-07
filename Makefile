@@ -59,18 +59,13 @@ e2e-test:
 	go test ./tests/e2e/... -timeout 0 -v -run Test/TestARMTagToNodeLabel
 .PHONY: e2e-run-tests
 
-e2e-cleanup-all: are-you-sure
-	az group list --subscription $(E2E_SUBSCRIPTION) --tag owned-by=node-label-operator --query "[].name" --output tsv \
-		| xargs -I @@ sh -c 'echo "deleting @@ ..."; az group delete --subscription ${E2E_SUBSCRIPTION} --name @@ --yes --no-wait;'
-.PHONY: e2e-cleanup-all
-
 # Generate code
 generate: controller-gen
 	$(CONTROLLER_GEN) object:headerFile=./hack/boilerplate.go.txt
 .PHONY: generate
 
 # Build the docker image
-docker-build: # test
+docker-build:
 	docker build . -t ${IMG}
 	@echo "updating kustomize image patch file for manager resource"
 	sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
@@ -92,6 +87,18 @@ CONTROLLER_GEN=$(shell which controller-gen)
 endif
 .PHONY: controller-gen
 
-are-you-sure:
-	@echo "Are you sure? [Y/N] " && read ans && [ $${ans:-N} = Y ]
-PHONY: are-you-sure
+# given a cluster with an identity, this should work
+quickstart: docker-build docker-push
+	sed 's/<subid>/'"${AZURE_SUBSCRIPTION_ID}"'/g' samples/quickstart.yaml | \
+		sed 's/<resource-group>/'"${AZURE_RESOURCE_GROUP}"'/g' | \
+		sed 's/<identity-name>/'"${AZURE_IDENTITY}"'/g' | \
+    	sed 's/<clientId>/'"${AZURE_IDENTITY_CLIENT_ID}"'/g' \
+		> config/quickstart/quickstarttmp.yaml
+	sed 's/<binding-name>/'"${AZURE_IDENTITY}"'-binding/g' config/quickstart/quickstarttmp.yaml | \
+		sed 's/<identity-name>/'"${AZURE_IDENTITY}"'/g' | \
+		sed 's/<selector-name>/node-label-operator/g' \
+		> config/quickstart/quickstart.yaml
+	kubectl apply -f config/quickstart/quickstart.yaml
+	rm config/quickstart/quickstarttmp.yaml
+	# kustomize build config/quickstart | kubectl apply -f -
+.PHONY: quickstart
