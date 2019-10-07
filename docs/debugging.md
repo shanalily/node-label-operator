@@ -29,4 +29,4 @@ Check that you created the proper roles. If you're not sure, looking the mic pod
 
 Make sure your selector for your identity binding 'node-label-operator' and your controller pods have labels 'aadpodidbinding=node-label-operator'. You can check by running `kubectl get pods --namespace=node-label-operator-system --show-labels`.
 
-If authentication works initially and then stops working, double check that you have only one user-assigned identity assigned to the VM or VMSS that the operator is running on.
+If authentication works initially and then stops working, double check that you have only one user-assigned identity assigned to the VM or VMSS that the operator is running on. You can check by running `az vmss identity show -g <resource-group> -n <vmss-name>` or `az vm identity show -g <resource-group> -n <vm-name>` to show all of the the user-assigned identities on a VM or VMSS.
