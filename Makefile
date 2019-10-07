@@ -88,11 +88,11 @@ endif
 .PHONY: controller-gen
 
 # given a cluster with an identity, this should work
-quickstart: docker-build docker-push
-	sed 's/<subid>/'"${AZURE_SUBSCRIPTION_ID}"'/g' samples/quickstart.yaml | \
+quickstart:
+	sed 's/<sub-id>/'"${AZURE_SUBSCRIPTION_ID}"'/g' samples/quickstart.yaml | \
 		sed 's/<resource-group>/'"${AZURE_RESOURCE_GROUP}"'/g' | \
 		sed 's/<identity-name>/'"${AZURE_IDENTITY}"'/g' | \
-    	sed 's/<clientId>/'"${AZURE_IDENTITY_CLIENT_ID}"'/g' \
+    	sed 's/<client-id>/'"${AZURE_IDENTITY_CLIENT_ID}"'/g' \
 		> config/quickstart/quickstarttmp.yaml
 	sed 's/<binding-name>/'"${AZURE_IDENTITY}"'-binding/g' config/quickstart/quickstarttmp.yaml | \
 		sed 's/<identity-name>/'"${AZURE_IDENTITY}"'/g' | \

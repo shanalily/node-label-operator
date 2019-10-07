@@ -256,8 +256,8 @@ metadata:
     name: <identity-name> 
 spec:
     type: 0
-    ResourceID: /subscriptions/<subid>/resourcegroups/<resource-group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<identity-name>
-    ClientID: <clientId>
+    ResourceID: /subscriptions/<sub-id>/resourcegroups/<resource-group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<identity-name>
+    ClientID: <client-id>
 ---
 apiVersion: "aadpodidentity.k8s.io/v1"
 kind: AzureIdentityBinding
@@ -285,8 +285,6 @@ data:
     conflictPolicy: "arm-precedence"
     syncDirection: "arm-to-node"
     minSyncPeriod: "1m"
-# when does this get built? It's hard to see in Makefile. This is in config/manager not config/default.
-# It's in config/default/kustomization.yaml, includes ../manager as well as ../rbac
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -294,17 +292,17 @@ metadata:
   name: node-label-operator-controller-manager
   namespace: node-label-operator-system
   labels:
-    control-plane: node-label-operator-controller-manager
+    control-plane: controller-manager
     aadpodidbinding: node-label-operator
 spec:
   selector:
     matchLabels:
-      control-plane: node-label-operator-controller-manager
+      control-plane: controller-manager
   replicas: 2
   template:
     metadata:
       labels:
-        control-plane: node-label-operator-controller-manager
+        control-plane: controller-manager
         aadpodidbinding: node-label-operator
     spec:
       containers:
@@ -312,8 +310,8 @@ spec:
         - /manager
         args:
         - --enable-leader-election
-        - --sync-period 10h
-        image: controller:latest
+        # - --sync-period 10h
+        image: shanalily/node-label 
         name: manager
         resources:
           limits:
