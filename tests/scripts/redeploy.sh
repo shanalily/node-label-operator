@@ -8,6 +8,6 @@ set -o pipefail
 kustomize build config/default | kubectl delete -f -
 
 # push new image and redeploy
-make e2e-docker-build e2e-docker-push
+make docker-build docker-push
 make deploy
 kubectl apply -f config/samples/configmap.yaml
