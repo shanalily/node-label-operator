@@ -55,7 +55,11 @@ lint:
 
 e2e-test:
 	go test ./tests/e2e/... -timeout 0 -v -run Test/TestARMTagToNodeLabel
-.PHONY: e2e-run-tests
+.PHONY: e2e-test
+
+e2e-redeploy:
+	./tests/scripts/redeploy.sh
+.PHONY: e2e-redeploy
 
 # Generate code
 generate: controller-gen

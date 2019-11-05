@@ -37,6 +37,9 @@ jobs:
 
     - name: Build Controller
       run: make
+
+    - name: Redeploy Controller
+      run: e2e-redeploy
       
     - name: AKS-Engine E2E Tests
       env:
