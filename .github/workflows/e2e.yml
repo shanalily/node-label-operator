@@ -37,8 +37,8 @@ jobs:
 
     - name: Setup Cluster
       run: |
-        cat ${{ secrets.AKSE_KUBECONFIG }} > $GITHUB_WORKSPACE/akse_kubeconfig
-        cat ${{ secrets.AKS_KUBECONFIG }} > $GITHUB_WORKSPACE/aks_kubeconfig
+        echo ${{ secrets.AKSE_KUBECONFIG }} > $GITHUB_WORKSPACE/akse_kubeconfig
+        echo ${{ secrets.AKS_KUBECONFIG }} > $GITHUB_WORKSPACE/aks_kubeconfig
 
     - name: Build Controller
       run: make
