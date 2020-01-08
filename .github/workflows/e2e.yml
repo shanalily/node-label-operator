@@ -1,7 +1,7 @@
 name: E2E
 on:
   schedule:
-  - cron: '0 0/1 * * *'
+  - cron: '*/15 * * * *'
 jobs:
 
   build:
@@ -36,9 +36,12 @@ jobs:
       uses: actions/checkout@v1
 
     - name: Setup Cluster
+      env: 
+        AKSE_KUBECONFIG: ${{ secrets.AKSE_KUBECONFIG }}
+        AKS_KUBECONFIG: ${{ secrets.AKS_KUBECONFIG }}
       run: |
-        echo ${{ secrets.AKSE_KUBECONFIG }} > $GITHUB_WORKSPACE/akse_kubeconfig
-        echo ${{ secrets.AKS_KUBECONFIG }} > $GITHUB_WORKSPACE/aks_kubeconfig
+        echo "$AKSE_KUBECONFIG" > $GITHUB_WORKSPACE/akse_kubeconfig
+        echo "$AKS_KUBECONFIG" > $GITHUB_WORKSPACE/aks_kubeconfig
 
     - name: Build Controller
       run: make
